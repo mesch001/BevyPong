@@ -6,25 +6,37 @@ use position::{collision, project_positions};
 mod ball;
 use ball::{move_ball, spawn_ball};
 
+mod paddle;
+use paddle::{move_right_paddle, spawn_paddles};
+
 mod wall;
 use wall::spawn_walls;
 
 mod scoreboard;
-use scoreboard::{spawn_scoreboard, Scoreboard, update_scoreboard};
-
+use scoreboard::{spawn_scoreboard, update_scoreboard, Scoreboard};
 
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .insert_resource(Scoreboard::default())
-        .add_systems(Startup, (setup, spawn_ball, spawn_walls, spawn_scoreboard))
+        .add_systems(
+            Startup,
+            (
+                setup,
+                spawn_ball,
+                spawn_walls,
+                spawn_scoreboard,
+                spawn_paddles,
+            ),
+        )
         .add_systems(
             Update,
             (
                 collision.before(move_ball),
                 move_ball,
                 project_positions.after(move_ball),
-                update_scoreboard
+                update_scoreboard,
+                move_right_paddle,
             ),
         )
         .run()

@@ -1,16 +1,16 @@
 use bevy::{
     ecs::{
         component::Component,
-        system::{Commands, Resource, Res, Query},
         query::With,
+        system::{Commands, Query, Res, Resource},
     },
     prelude::TextBundle,
     render::color::Color,
-    utils::default, text::TextSection,
+    text::TextSection,
     text::{Text, TextStyle},
-    ui::{Style,Val, PositionType},
+    ui::{PositionType, Style, Val},
+    utils::default,
 };
-
 
 const TEXT_COLOR: Color = Color::rgb(0.5, 0.5, 1.0);
 const SCOREBOARD_FONT_SIZE: f32 = 20.0;
@@ -18,7 +18,7 @@ const SCOREBOARD_TEXT_PADDING: Val = Val::Px(5.0);
 const SCORE_COLOR: Color = Color::rgb(1.0, 0.5, 0.5);
 
 #[derive(Resource, Default)]
-pub struct Scoreboard{
+pub struct Scoreboard {
     pub points_left: u8,
     pub points_right: u8,
 }
@@ -26,10 +26,7 @@ pub struct Scoreboard{
 #[derive(Component)]
 pub struct ScoreboardUI;
 
-pub fn spawn_scoreboard(
-    mut commands: Commands,
-) {
-
+pub fn spawn_scoreboard(mut commands: Commands) {
     commands.spawn((
         ScoreboardUI,
         TextBundle::from_sections([
@@ -69,7 +66,10 @@ pub fn spawn_scoreboard(
     ));
 }
 
-pub fn update_scoreboard(scoreboard: Res<Scoreboard>, mut query: Query<&mut Text, With<ScoreboardUI>>) {
+pub fn update_scoreboard(
+    scoreboard: Res<Scoreboard>,
+    mut query: Query<&mut Text, With<ScoreboardUI>>,
+) {
     let mut text = query.single_mut();
     text.sections[1].value = scoreboard.points_right.to_string();
     text.sections[3].value = scoreboard.points_left.to_string();

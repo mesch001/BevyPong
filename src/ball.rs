@@ -1,4 +1,4 @@
-use crate::position::{Position, Velocity};
+use crate::position::{Position, Velocity, VELOCITY};
 use bevy::{
     asset::Assets,
     ecs::{
@@ -30,7 +30,7 @@ impl BallBundle {
         Self {
             ball: Ball,
             position: Position(Vec2::new(0., 0.)),
-            velocity: Velocity(Vec2::new(5., 5.)),
+            velocity: Velocity(Vec2::new(VELOCITY, VELOCITY)),
         }
     }
 }
