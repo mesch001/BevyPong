@@ -4,7 +4,7 @@ use bevy::prelude::{ResMut, With, Without};
 use bevy::transform::components::Transform;
 
 use crate::ball::Ball;
-use crate::paddle::{Paddle, PADDLE_HEIGHT, PADDLE_WIDTH};
+use crate::paddle::PADDLE_HEIGHT;
 use crate::scoreboard::Scoreboard;
 use crate::wall::WALL_HEIGHT;
 
@@ -30,17 +30,14 @@ pub struct Velocity(pub Vec2);
 pub fn collision(
     mut scoreboard: ResMut<Scoreboard>,
     mut ball: Query<(&Position, &mut Velocity), With<Ball>>,
-    paddles: Query<(&Position, &Paddle), Without<Ball>>,
+    paddles: Query<&Position, Without<Ball>>,
 ) {
     if let Ok((ball_pos, mut velocity)) = ball.get_single_mut() {
-        for (paddle_pos, paddle) in &paddles {
+        for paddle_pos in &paddles {
             if ball_pos.0.x == paddle_pos.0.x
                 && ((ball_pos.0.y <= paddle_pos.0.y + PADDLE_HEIGHT / 2.)
                     && (ball_pos.0.y >= paddle_pos.0.y - PADDLE_HEIGHT / 2.))
             {
-                println!(
-                    "Ball with pos {ball_pos:?} hit paddle {paddle:?} with pos {paddle_pos:?}"
-                );
                 velocity.0.x += -2.0 * velocity.0.x;
             }
         }

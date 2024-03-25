@@ -2,8 +2,7 @@ use bevy::{
     asset::Assets,
     ecs::{
         component::Component,
-        query::{With, Without},
-        system::{Commands, Query, ResMut},
+        system::{Commands, ResMut},
     },
     prelude::{Bundle, Color, Mesh, Rectangle, Vec2},
     sprite::ColorMaterial,
@@ -12,7 +11,6 @@ use bevy::{
 };
 
 use crate::position::{Position, FIELD_BOUNDARIES_LEFT, FIELD_BOUNDARIES_RIGHT};
-use crate::{ball::Ball, position::VELOCITY};
 
 const PADDLE_POSITION_Y: f32 = 0.;
 const PADDLE_POSITION_X_LEFT: f32 = FIELD_BOUNDARIES_LEFT + 50.;
@@ -28,7 +26,7 @@ pub enum PaddleLocation {
 
 #[derive(Component, Debug)]
 pub struct Paddle {
-    location: PaddleLocation,
+    pub location: PaddleLocation,
 }
 
 impl Paddle {
@@ -88,23 +86,4 @@ pub fn spawn_paddles(
             ..default()
         },
     ));
-}
-
-pub fn move_right_paddle(
-    ball: Query<&Position, With<Ball>>,
-    mut paddles: Query<(&mut Position, &Paddle), Without<Ball>>,
-) {
-    for (mut paddle_pos, paddle) in &mut paddles {
-        if paddle.location == PaddleLocation::Right {
-            if let Ok(position) = ball.get_single() {
-                if position.0.x > 0. {
-                    if position.0.y < paddle_pos.0.y {
-                        paddle_pos.0.y -= VELOCITY;
-                    } else {
-                        paddle_pos.0.y += VELOCITY;
-                    }
-                }
-            }
-        }
-    }
 }

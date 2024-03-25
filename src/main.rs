@@ -7,13 +7,16 @@ mod ball;
 use ball::{move_ball, spawn_ball};
 
 mod paddle;
-use paddle::{move_right_paddle, spawn_paddles};
+use paddle::spawn_paddles;
 
 mod wall;
 use wall::spawn_walls;
 
 mod scoreboard;
 use scoreboard::{spawn_scoreboard, update_scoreboard, Scoreboard};
+
+mod movement;
+use movement::{move_player_paddle, move_right_paddle};
 
 fn main() {
     App::new()
@@ -37,6 +40,7 @@ fn main() {
                 project_positions.after(move_ball),
                 update_scoreboard,
                 move_right_paddle,
+                move_player_paddle,
             ),
         )
         .run()
