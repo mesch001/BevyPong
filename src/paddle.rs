@@ -15,8 +15,8 @@ use crate::position::{Position, FIELD_BOUNDARIES_LEFT, FIELD_BOUNDARIES_RIGHT};
 const PADDLE_POSITION_Y: f32 = 0.;
 const PADDLE_POSITION_X_LEFT: f32 = FIELD_BOUNDARIES_LEFT + 50.;
 const PADDLE_POSITION_X_RIGHT: f32 = FIELD_BOUNDARIES_RIGHT - 50.;
-pub const PADDLE_WIDTH: f32 = 20.0;
-pub const PADDLE_HEIGHT: f32 = 50.;
+pub const PADDLE_WIDTH: f32 = 20.;
+pub const PADDLE_HEIGHT: f32 = 100.;
 
 #[derive(Debug, PartialEq)]
 pub enum PaddleLocation {
@@ -60,11 +60,11 @@ pub fn spawn_paddles(
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    let wall = Mesh::from(Rectangle::new(PADDLE_WIDTH, PADDLE_HEIGHT));
-    let wall_color = ColorMaterial::from(Color::rgb(128., 128., 128.));
+    let paddle = Mesh::from(Rectangle::new(PADDLE_WIDTH, PADDLE_HEIGHT));
+    let paddle_color = ColorMaterial::from(Color::rgb(255., 0., 132.));
 
-    let mesh_handle = meshes.add(wall);
-    let material_handle = materials.add(wall_color);
+    let mesh_handle = meshes.add(paddle);
+    let material_handle = materials.add(paddle_color);
 
     commands.spawn((
         PaddleBundle::new(Paddle {
