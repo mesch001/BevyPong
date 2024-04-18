@@ -13,7 +13,7 @@ use bevy::{
     utils::default,
 };
 
-const BALL_SIZE: f32 = 10.;
+const BALL_SIZE: f32 = 15.;
 
 #[derive(Component)]
 pub struct Ball;
@@ -37,8 +37,8 @@ impl BallBundle {
 
 pub fn move_ball(mut ball: Query<(&mut Position, &Velocity), With<Ball>>) {
     if let Ok((mut position, velocity)) = ball.get_single_mut() {
-        position.0.x += velocity.0.x;
-        position.0.y += velocity.0.y;
+        position.0.x += velocity.0.x * 2.;
+        position.0.y += velocity.0.y * 2.;
     }
 }
 
@@ -50,7 +50,7 @@ pub fn spawn_ball(
     println!("Spawning ball");
 
     let ball = Mesh::from(Circle::new(BALL_SIZE));
-    let ball_color = ColorMaterial::from(Color::rgb(0., 0., 1.));
+    let ball_color = ColorMaterial::from(Color::rgb(245., 255., 0.));
 
     let mesh_handle = meshes.add(ball);
     let material_handle = materials.add(ball_color);
