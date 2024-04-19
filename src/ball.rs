@@ -13,7 +13,7 @@ use bevy::{
     utils::default,
 };
 
-const BALL_SIZE: f32 = 15.;
+pub const BALL_SIZE: f32 = 15.;
 
 #[derive(Component)]
 pub struct Ball;
