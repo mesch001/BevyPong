@@ -1,15 +1,15 @@
 use bevy::asset::Assets;
-use bevy::ecs::system::{Commands, ResMut};
+use bevy::ecs::system::{Commands, ResMut, Query};
 use bevy::sprite::MaterialMesh2dBundle;
 use bevy::utils::default;
 use bevy::{
     ecs::component::Component,
     prelude::{Bundle, Color, Mesh, Rectangle, Vec2},
     sprite::ColorMaterial,
+    window::Window,
 };
 
-use crate::position::{Position, FIELD_BOUNDARIES_RIGHT};
-use crate::position::{FIELD_BOUNDARIES_BOTTOM, FIELD_BOUNDARIES_TOP};
+use crate::position::{Position, Shape, FIELD_BOUNDARIES_RIGHT, FIELD_BOUNDARIES_BOTTOM, FIELD_BOUNDARIES_TOP};
 
 const TOP_WALL_POSITION_Y: f32 = FIELD_BOUNDARIES_TOP;
 const BOTTOM_WALL_POSITION_Y: f32 = FIELD_BOUNDARIES_BOTTOM;
@@ -19,31 +19,21 @@ const WALL_WIDTH: f32 = FIELD_BOUNDARIES_RIGHT * 2.0;
 pub const WALL_HEIGHT: f32 = 20.;
 
 #[derive(Component)]
-pub enum Wall {
-    Top,
-    Bottom,
-}
-
-impl Wall {
-    fn position(&self) -> Position {
-        match self {
-            Wall::Top => Position(Vec2::new(WALL_POSITION_X, TOP_WALL_POSITION_Y)),
-            Wall::Bottom => Position(Vec2::new(WALL_POSITION_X, BOTTOM_WALL_POSITION_Y)),
-        }
-    }
-}
+struct Wall;
 
 #[derive(Bundle)]
 pub struct WallBundle {
-    location: Wall,
+    wall: Wall,
+    shape: Shape,
     position: Position,
 }
 
 impl WallBundle {
-    pub fn new(location: Wall) -> Self {
+    pub fn new(x:f32, y:f32,width:f32) -> Self {
         Self {
-            position: location.position(),
-            location,
+            wall:Wall,
+            shape: Shape(Vec2::new(width, WALL_HEIGHT)),
+            position: Position(Vec2::new(x,y)),
         }
     }
 }
@@ -52,15 +42,28 @@ pub fn spawn_walls(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    window: Query<&Window>,
 ) {
-    let wall = Mesh::from(Rectangle::new(WALL_WIDTH, WALL_HEIGHT));
-    let wall_color = ColorMaterial::from(Color::rgb(0., 0., 0.));
+    if let Ok(window) = window.get_single(){
+        let window_width = window.resolution.width();
+        let window_height = window.resolution.height();
 
-    let mesh_handle = meshes.add(wall);
-    let material_handle = materials.add(wall_color);
+        let wall_x = 0.;
+        let top_wall_y = window_height / 2. - WALL_HEIGHT / 2.;
+        let bottom_wall_y = WALL_HEIGHT / 2. - window_height / 2.;
+
+        let top_wall = WallBundle::new(wall_x,top_wall_y, window_width);
+        let bottom_wall = WallBundle::new(wall_x,bottom_wall_y, window_width);
+
+        let wall = Mesh::from(Rectangle::from_size(top_wall.shape.0));
+        let wall_color = ColorMaterial::from(Color::rgb(0., 0., 0.));
+
+        let mesh_handle = meshes.add(wall);
+        let material_handle = materials.add(wall_color);
+    
 
     commands.spawn((
-        WallBundle::new(Wall::Top),
+        top_wall,
         MaterialMesh2dBundle {
             mesh: mesh_handle.clone().into(),
             material: material_handle.clone(),
@@ -68,11 +71,12 @@ pub fn spawn_walls(
         },
     ));
     commands.spawn((
-        WallBundle::new(Wall::Bottom),
+        bottom_wall,
         MaterialMesh2dBundle {
-            mesh: mesh_handle.into(),
-            material: material_handle,
+            mesh: mesh_handle.clone().into(),
+            material: material_handle.clone(),
             ..default()
         },
     ));
+}
 }

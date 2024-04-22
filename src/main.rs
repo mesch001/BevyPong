@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 mod position;
-use position::{collision, project_positions};
+use position::{collision, project_positions, handle_collisions};
 
 mod ball;
 use ball::{move_ball, spawn_ball};
@@ -16,7 +16,7 @@ mod scoreboard;
 use scoreboard::{spawn_scoreboard, update_scoreboard, Scoreboard};
 
 mod movement;
-use movement::{move_player_paddle, move_right_paddle};
+use movement::{move_player_paddle, move_ai_paddle};
 
 fn main() {
     App::new()
@@ -38,6 +38,7 @@ fn main() {
                 collision.before(move_ball),
                 move_ball,
                 project_positions.after(move_ball),
+                handle_collisions.after(move_ball),
                 update_scoreboard,
                 move_right_paddle,
                 move_player_paddle,

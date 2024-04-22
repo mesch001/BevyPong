@@ -1,4 +1,4 @@
-use crate::position::{Position, Velocity, VELOCITY};
+use crate::position::{Position, Velocity, Shape, VELOCITY};
 use bevy::{
     asset::Assets,
     ecs::{
@@ -21,24 +21,25 @@ pub struct Ball;
 #[derive(Bundle)]
 pub struct BallBundle {
     ball: Ball,
+    shape: Shape,
     position: Position,
     velocity: Velocity,
 }
 
 impl BallBundle {
-    pub fn new() -> Self {
+    pub fn new(x: f32,y:f32) -> Self {
         Self {
             ball: Ball,
+            shape: Shape(Vec2::new(BALL_SIZE, BALL_SIZE)),
             position: Position(Vec2::new(0., 0.)),
-            velocity: Velocity(Vec2::new(VELOCITY, VELOCITY)),
+            velocity: Velocity(Vec2::new(x, y)),
         }
     }
 }
 
 pub fn move_ball(mut ball: Query<(&mut Position, &Velocity), With<Ball>>) {
     if let Ok((mut position, velocity)) = ball.get_single_mut() {
-        position.0.x += velocity.0.x * 2.;
-        position.0.y += velocity.0.y * 2.;
+        position.0 += velocity.0 * 2.;
     }
 }
 
@@ -56,7 +57,7 @@ pub fn spawn_ball(
     let material_handle = materials.add(ball_color);
 
     commands.spawn((
-        BallBundle::new(),
+        BallBundle::new(1., 1.),
         MaterialMesh2dBundle {
             mesh: mesh_handle.into(),
             material: material_handle,

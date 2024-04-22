@@ -1,4 +1,5 @@
 use bevy::{
+    window::Window,
     ecs::{
         query::{With, Without},
         system::{Query, Res},
@@ -6,49 +7,43 @@ use bevy::{
     prelude::{ButtonInput, KeyCode},
 };
 
-use crate::position::Position;
+use crate::position::{Position, Velocity};
 use crate::{ball::Ball, position::VELOCITY};
 use crate::{
-    paddle::{Paddle, PaddleLocation, PADDLE_HEIGHT},
+    paddle::{Paddle, PADDLE_HEIGHT},
     position::{FIELD_BOUNDARIES_BOTTOM, FIELD_BOUNDARIES_TOP},
     wall::WALL_HEIGHT,
 };
 
-pub fn move_right_paddle(
-    ball: Query<&Position, With<Ball>>,
-    mut paddles: Query<(&mut Position, &Paddle), Without<Ball>>,
+const PADDLE_SPEED: f32 = 5.;
+
+fn handle_player_input(
+    keyboard_input: Res<ButtonInput<KeyCode>>,
+    mut paddle: Query<&mut Velocity, With<Player>>,
 ) {
-    for (mut paddle_pos, paddle) in &mut paddles {
-        if paddle.location == PaddleLocation::Right {
-            if let Ok(position) = ball.get_single() {
-                if position.0.x > 0. && position.0.x < paddle_pos.0.x {
-                    if position.0.y < paddle_pos.0.y {
-                        paddle_pos.0.y -= VELOCITY;
-                    } else {
-                        paddle_pos.0.y += VELOCITY;
-                    }
-                }
-            }
+    if let Ok(mut velocity) = paddle.get_single_mut() {
+        if keyboard_input.pressed(KeyCode::ArrowUp) {
+            velocity.0.y = 1.;
+        } else if keyboard_input.pressed(KeyCode::ArrowDown) {
+            velocity.0.y = -1.;
+        } else {
+            velocity.0.y = 0.;
         }
     }
 }
 
-pub fn move_player_paddle(
-    input: Res<ButtonInput<KeyCode>>,
-    mut pos: Query<(&mut Position, &Paddle), With<Paddle>>,
+fn move_paddles(
+    mut paddle: Query<(&mut Position, &Velocity), With<Paddle>>,
+    window: Query<&Window>,
 ) {
-    for (mut paddle_pos, paddle) in &mut pos {
-        if paddle.location == PaddleLocation::Left {
-            if input.pressed(KeyCode::ArrowUp)
-                && paddle_pos.0.y + PADDLE_HEIGHT / 2.0 + WALL_HEIGHT / 2.0 < FIELD_BOUNDARIES_TOP
-            {
-                paddle_pos.0.y += VELOCITY;
-            }
-            if input.pressed(KeyCode::ArrowDown)
-                && paddle_pos.0.y - PADDLE_HEIGHT / 2.0 - WALL_HEIGHT / 2.0
-                    > FIELD_BOUNDARIES_BOTTOM
-            {
-                paddle_pos.0.y -= VELOCITY;
+    if let Ok(window) = window.get_single() {
+        let window_height = window.resolution.height();
+        let max_y = window_height / 2. - WALL_HEIGHT - PADDLE_HEIGHT / 2.;
+
+        for (mut position, velocity) in &mut paddle {
+            let new_position = position.0 + velocity.0 * PADDLE_SPEED;
+            if new_position.y.abs() < max_y {
+                position.0 = new_position;
             }
         }
     }
