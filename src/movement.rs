@@ -7,9 +7,9 @@ use bevy::{
     prelude::{ButtonInput, KeyCode},
 };
 
-use crate::position::{Position, Velocity};
+use crate::{position::{Position, Velocity}};
 use crate::{
-    paddle::{Paddle, PADDLE_HEIGHT, Player},
+    paddle::{Paddle, PADDLE_HEIGHT, LeftPaddleBundle, RightPaddleBundle, PlayerType, Player1, Player2, Ai},
     wall::WALL_HEIGHT,
 };
 
@@ -17,17 +17,41 @@ const PADDLE_SPEED: f32 = 5.;
 
 pub fn handle_player_input(
     keyboard_input: Res<ButtonInput<KeyCode>>,
-    mut paddle: Query<&mut Velocity, With<Player>>,
+    mut paddle_player1: Query<(&mut Velocity, &PlayerType), With<LeftPaddleBundle>>,
+    mut paddle_player2: Query<(&mut Velocity, &PlayerType), With<RightPaddleBundle>>,
 ) {
-    if let Ok(mut velocity) = paddle.get_single_mut() {
-        if keyboard_input.pressed(KeyCode::ArrowUp) {
-            velocity.0.y = 1.;
-        } else if keyboard_input.pressed(KeyCode::ArrowDown) {
-            velocity.0.y = -1.;
-        } else {
-            velocity.0.y = 0.;
+    
+    if let Ok((mut velocity, player_type)) = paddle_player1.get_single_mut() {
+        if player_type == Player1{
+            if keyboard_input.pressed(KeyCode::ArrowUp) {
+                velocity.0.y = 1.;
+            } else if keyboard_input.pressed(KeyCode::ArrowDown) {
+                velocity.0.y = -1.;
+            } else {
+                velocity.0.y = 0.;
+            }
         }
-    }
+    } 
+        
+    if let Ok((mut velocity, player_type)) = paddle_player1.get_single_mut() {
+        if player_type == Player2{
+            if keyboard_input.pressed(KeyCode::KeyW) {
+                velocity.0.y = 1.;
+            } else if keyboard_input.pressed(KeyCode::KeyS) {
+                velocity.0.y = -1.;
+            } else {
+                velocity.0.y = 0.;
+            }
+        } else if player_type == Ai{
+            if keyboard_input.pressed(KeyCode::KeyW) {
+                velocity.0.y = 1.;
+            } else if keyboard_input.pressed(KeyCode::KeyS) {
+                velocity.0.y = -1.;
+            } else {
+                velocity.0.y = 0.;
+            }
+        }
+    } 
 }
 
 pub fn move_paddles(

@@ -15,6 +15,10 @@ use wall::spawn_walls;
 mod movement;
 use movement::{move_paddles, handle_player_input};
 
+mod scoreboard;
+use scoreboard::{spawn_scoreboard, update_scoreboard, Scoreboard};
+
+
 mod event;
 use event::{Score, Scored, detect_scoring, reset_ball,update_score};
 
@@ -28,6 +32,7 @@ fn main() {
         (
             spawn_ball,
             spawn_camera,
+            spawn_scoreboard,
             spawn_paddles,
             spawn_walls,
         ),
@@ -38,6 +43,7 @@ fn main() {
             move_ball,
             handle_player_input,
             detect_scoring,
+            update_scoreboard,
             reset_ball.after(detect_scoring),
             update_score.after(detect_scoring),
             move_paddles.after(handle_player_input),

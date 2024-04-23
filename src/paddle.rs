@@ -16,8 +16,63 @@ use crate::position::{Position, Shape, Velocity};
 pub const PADDLE_WIDTH: f32 = 10.;
 pub const PADDLE_HEIGHT: f32 = 50.;
 
+#[derive(Component)]
+pub struct Player1;
+
+#[derive(Component)]
+pub struct Player2;
+
+#[derive(Component)]
+pub struct Ai;
+
+#[derive(Component)]
+pub struct PlayerType {    
+    player1: Player1,
+    player2: Player2,
+    ai: Ai,
+}
+
 #[derive(Component, Debug)]
 pub struct Paddle ;
+
+
+#[derive(Component)]
+pub struct LeftPaddle;
+
+#[derive(Component)]
+pub struct LeftPaddleBundle {
+    paddle_control: LeftPaddle,
+    player: PlayerType,
+}
+
+impl LeftPaddleBundle {
+    pub fn new(player_type: PlayerType) -> Self {
+        Self {
+            paddle_control: LeftPaddle,
+            player: player_type,
+        }
+    }
+}
+
+
+#[derive(Component)]
+pub struct RightPaddle;
+
+#[derive(Component)]
+pub struct RightPaddleBundle {
+    paddle_control: RightPaddle,
+    player: PlayerType,
+}
+
+impl RightPaddleBundle {
+    pub fn new(player_type: PlayerType) -> Self {
+        Self {
+            paddle_control: RightPaddle,
+            player: player_type,
+        }
+    }
+}
+
 
 #[derive(Bundle)]
 pub struct PaddleBundle {
@@ -26,13 +81,6 @@ pub struct PaddleBundle {
     position: Position,
     velocity: Velocity,
 }
-
-#[derive(Component)]
-pub struct Player ;
-
-#[derive(Component)]
-pub struct Ai ;
-
 impl PaddleBundle {
     pub fn new(x: f32, y: f32) -> Self {
         Self {
@@ -65,7 +113,7 @@ pub fn spawn_paddles(
     
 
     commands.spawn((
-        Player,
+        LeftPaddleBundle::new(Player1),
         PaddleBundle::new(left_paddle_x, 0.),
         MaterialMesh2dBundle {
             mesh: mesh_handle.clone().into(),
@@ -74,7 +122,7 @@ pub fn spawn_paddles(
         },
     ));
     commands.spawn((
-        Ai,
+        RightPaddleBundle::new(Ai),
         PaddleBundle::new(right_paddle_x, 0.),
         MaterialMesh2dBundle {
             mesh: mesh_handle.clone().into(),

@@ -4,8 +4,8 @@ use crate::position::{Position, Velocity};
 use crate::ball::Ball;
 
 enum Scorer {
-    Ai,
-    Player
+    LeftPlayer,
+    RightPlayer
 }
 
 #[derive(Event)]
