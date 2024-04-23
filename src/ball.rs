@@ -1,4 +1,4 @@
-use crate::position::{Position, Velocity, Shape, VELOCITY};
+use crate::position::{Position, Velocity, Shape};
 use bevy::{
     asset::Assets,
     ecs::{

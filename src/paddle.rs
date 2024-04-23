@@ -3,7 +3,6 @@ use bevy::{
     ecs::{
         component::Component,
         system::{Commands, ResMut, Query},
-        query::{With, Without},
     },
     prelude::{Bundle, Color, Mesh, Rectangle, Vec2},
     sprite::ColorMaterial,
@@ -12,12 +11,8 @@ use bevy::{
     window::Window,
 };
 
-use crate::position::{Position, Shape, Velocity, FIELD_BOUNDARIES_LEFT, FIELD_BOUNDARIES_RIGHT};
+use crate::position::{Position, Shape, Velocity};
 
-const PADDLE_SPEED: f32 = 1.;
-const PADDLE_POSITION_Y: f32 = 0.;
-const PADDLE_POSITION_X_LEFT: f32 = FIELD_BOUNDARIES_LEFT + 50.;
-const PADDLE_POSITION_X_RIGHT: f32 = FIELD_BOUNDARIES_RIGHT - 50.;
 pub const PADDLE_WIDTH: f32 = 10.;
 pub const PADDLE_HEIGHT: f32 = 50.;
 
@@ -31,6 +26,12 @@ pub struct PaddleBundle {
     position: Position,
     velocity: Velocity,
 }
+
+#[derive(Component)]
+pub struct Player ;
+
+#[derive(Component)]
+pub struct Ai ;
 
 impl PaddleBundle {
     pub fn new(x: f32, y: f32) -> Self {
@@ -54,7 +55,7 @@ pub fn spawn_paddles(
         let window_width = window.resolution.width();
         let padding = 50.;
         let right_paddle_x = window_width / 2. - padding;
-        let left_paddle_x = window_width / 2. + padding;
+        let left_paddle_x = padding - window_width / 2.;
 
         let paddle_mesh = Mesh::from(Rectangle::new(PADDLE_WIDTH, PADDLE_HEIGHT));
         let paddle_color = ColorMaterial::from(Color::rgb(255., 0., 132.));
@@ -67,7 +68,7 @@ pub fn spawn_paddles(
         Player,
         PaddleBundle::new(left_paddle_x, 0.),
         MaterialMesh2dBundle {
-            mesh: mesh_handle.into(),
+            mesh: mesh_handle.clone().into(),
             material: material_handle.clone(),
             ..default()
         },
@@ -76,7 +77,7 @@ pub fn spawn_paddles(
         Ai,
         PaddleBundle::new(right_paddle_x, 0.),
         MaterialMesh2dBundle {
-            mesh: mesh_handle.into(),
+            mesh: mesh_handle.clone().into(),
             material: material_handle.clone(),
             ..default()
         },

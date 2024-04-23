@@ -9,13 +9,8 @@ use bevy::{
     window::Window,
 };
 
-use crate::position::{Position, Shape, FIELD_BOUNDARIES_RIGHT, FIELD_BOUNDARIES_BOTTOM, FIELD_BOUNDARIES_TOP};
+use crate::position::{Position, Shape};
 
-const TOP_WALL_POSITION_Y: f32 = FIELD_BOUNDARIES_TOP;
-const BOTTOM_WALL_POSITION_Y: f32 = FIELD_BOUNDARIES_BOTTOM;
-const WALL_POSITION_X: f32 = 0.;
-
-const WALL_WIDTH: f32 = FIELD_BOUNDARIES_RIGHT * 2.0;
 pub const WALL_HEIGHT: f32 = 20.;
 
 #[derive(Component)]

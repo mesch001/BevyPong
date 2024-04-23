@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 mod position;
-use position::{collision, project_positions, handle_collisions};
+use position::{project_positions, handle_collisions};
 
 mod ball;
 use ball::{move_ball, spawn_ball};
@@ -12,41 +12,41 @@ use paddle::spawn_paddles;
 mod wall;
 use wall::spawn_walls;
 
-mod scoreboard;
-use scoreboard::{spawn_scoreboard, update_scoreboard, Scoreboard};
-
 mod movement;
-use movement::{move_player_paddle, move_ai_paddle};
+use movement::{move_paddles, handle_player_input};
+
+mod event;
+use event::{Score, Scored, detect_scoring, reset_ball,update_score};
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
-        .insert_resource(Scoreboard::default())
-        .add_systems(
-            Startup,
-            (
-                setup,
-                spawn_ball,
-                spawn_walls,
-                spawn_scoreboard,
-                spawn_paddles,
-            ),
-        )
-        .add_systems(
-            Update,
-            (
-                collision.before(move_ball),
-                move_ball,
-                project_positions.after(move_ball),
-                handle_collisions.after(move_ball),
-                update_scoreboard,
-                move_right_paddle,
-                move_player_paddle,
-            ),
-        )
-        .run()
+    .add_plugins(DefaultPlugins)
+    .init_resource::<Score>()
+    .add_event::<Scored>()
+    .add_systems(
+        Startup,
+        (
+            spawn_ball,
+            spawn_camera,
+            spawn_paddles,
+            spawn_walls,
+        ),
+    )
+    .add_systems(
+        Update,
+        (
+            move_ball,
+            handle_player_input,
+            detect_scoring,
+            reset_ball.after(detect_scoring),
+            update_score.after(detect_scoring),
+            move_paddles.after(handle_player_input),
+            project_positions.after(move_ball),
+            handle_collisions.after(move_ball),
+        ),
+    ).run()
 }
 
-fn setup(mut commands: Commands) {
+fn spawn_camera(mut commands: Commands) {
     commands.spawn_empty().insert(Camera2dBundle::default());
 }

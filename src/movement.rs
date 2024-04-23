@@ -1,23 +1,21 @@
 use bevy::{
     window::Window,
     ecs::{
-        query::{With, Without},
+        query::With,
         system::{Query, Res},
     },
     prelude::{ButtonInput, KeyCode},
 };
 
 use crate::position::{Position, Velocity};
-use crate::{ball::Ball, position::VELOCITY};
 use crate::{
-    paddle::{Paddle, PADDLE_HEIGHT},
-    position::{FIELD_BOUNDARIES_BOTTOM, FIELD_BOUNDARIES_TOP},
+    paddle::{Paddle, PADDLE_HEIGHT, Player},
     wall::WALL_HEIGHT,
 };
 
 const PADDLE_SPEED: f32 = 5.;
 
-fn handle_player_input(
+pub fn handle_player_input(
     keyboard_input: Res<ButtonInput<KeyCode>>,
     mut paddle: Query<&mut Velocity, With<Player>>,
 ) {
@@ -32,7 +30,7 @@ fn handle_player_input(
     }
 }
 
-fn move_paddles(
+pub fn move_paddles(
     mut paddle: Query<(&mut Position, &Velocity), With<Paddle>>,
     window: Query<&Window>,
 ) {
