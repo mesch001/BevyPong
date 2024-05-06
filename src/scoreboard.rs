@@ -71,6 +71,6 @@ pub fn update_scoreboard(
     mut query: Query<&mut Text, With<ScoreboardUI>>,
 ) {
     let mut text = query.single_mut();
-    text.sections[1].value = scoreboard.points_right.to_string();
-    text.sections[3].value = scoreboard.points_left.to_string();
+    text.sections[1].value = scoreboard.points_left.to_string();
+    text.sections[3].value = scoreboard.points_right.to_string();
 }

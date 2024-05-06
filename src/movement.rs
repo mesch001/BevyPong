@@ -1,7 +1,7 @@
 use bevy::{
     ecs::{
         query::{With, Without},
-        system::{Query, Res},
+        system::{Query, Res, ResMut},
     },
     math::Vec2,
     prelude::{ButtonInput, KeyCode},
@@ -12,6 +12,7 @@ use crate::position::{FIELD_BOUNDARIES_LEFT, FIELD_BOUNDARIES_RIGHT, FIELD_BOUND
 use crate::ball::{Ball, BALL_VELOCITY};
 use crate::paddle::{Paddle, PaddleLocation, PADDLE_HEIGHT, PADDLE_VELOCITY};
 use crate::wall::WALL_HEIGHT;
+use crate::scoreboard::Scoreboard;
 
 pub fn move_ball(mut ball: Query<(&mut Position, &Velocity), With<Ball>>) {
     if let Ok((mut position, velocity)) = ball.get_single_mut() {
@@ -20,15 +21,18 @@ pub fn move_ball(mut ball: Query<(&mut Position, &Velocity), With<Ball>>) {
 }
 
 pub fn reset_ball(
+    mut scoreboard: ResMut<Scoreboard>,
     mut ball: Query<(&mut Position, &mut Velocity), With<Ball>>,
 ) {
     if let Ok((mut position,mut velocity )) = ball.get_single_mut() {
         if position.0.x >= FIELD_BOUNDARIES_RIGHT{
                 position.0 = Vec2::new(0., 0.);
                 velocity.0 = Vec2::new(-1. * BALL_VELOCITY, BALL_VELOCITY);
+                scoreboard.points_left += 1;
         } else if position.0.x <= FIELD_BOUNDARIES_LEFT {
                 position.0 = Vec2::new(0., 0.);
                 velocity.0 = Vec2::new(BALL_VELOCITY, BALL_VELOCITY);
+                scoreboard.points_right += 1;
             }
         }
     }
