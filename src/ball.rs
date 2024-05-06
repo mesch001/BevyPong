@@ -1,4 +1,3 @@
-use crate::position::{Position, Velocity, VELOCITY};
 use bevy::{
     asset::Assets,
     ecs::{
@@ -7,13 +6,18 @@ use bevy::{
         system::{Commands, ResMut},
     },
     math::{primitives::Circle, Vec2},
-    prelude::{Query, With},
     render::{color::Color, mesh::Mesh},
     sprite::{ColorMaterial, MaterialMesh2dBundle},
     utils::default,
 };
 
+use crate::components::{Shape, Position, Velocity};
+
 const BALL_SIZE: f32 = 15.;
+pub const BALL_VELOCITY: f32 = 6.;
+const BALL_START_POSITION_X: f32 = 0.;
+const BALL_START_POSITION_Y: f32 = 0.;
+
 
 #[derive(Component)]
 pub struct Ball;
@@ -23,24 +27,21 @@ pub struct BallBundle {
     ball: Ball,
     position: Position,
     velocity: Velocity,
+    shape: Shape,
 }
 
 impl BallBundle {
     pub fn new() -> Self {
         Self {
             ball: Ball,
-            position: Position(Vec2::new(0., 0.)),
-            velocity: Velocity(Vec2::new(VELOCITY, VELOCITY)),
+            position: Position(Vec2::new(BALL_START_POSITION_X, BALL_START_POSITION_Y)),
+            velocity: Velocity(Vec2::new(BALL_VELOCITY, BALL_VELOCITY)),
+            shape: Shape(Vec2::new(BALL_SIZE, BALL_SIZE)),
         }
     }
 }
 
-pub fn move_ball(mut ball: Query<(&mut Position, &Velocity), With<Ball>>) {
-    if let Ok((mut position, velocity)) = ball.get_single_mut() {
-        position.0.x += velocity.0.x * 2.;
-        position.0.y += velocity.0.y * 2.;
-    }
-}
+
 
 pub fn spawn_ball(
     mut commands: Commands,

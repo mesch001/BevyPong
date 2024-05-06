@@ -8,8 +8,8 @@ use bevy::{
     sprite::ColorMaterial,
 };
 
-use crate::position::{Position, FIELD_BOUNDARIES_RIGHT};
-use crate::position::{FIELD_BOUNDARIES_BOTTOM, FIELD_BOUNDARIES_TOP};
+use crate::components::{Position, Shape};
+use crate::position::{FIELD_BOUNDARIES_BOTTOM, FIELD_BOUNDARIES_TOP, FIELD_BOUNDARIES_RIGHT};
 
 const TOP_WALL_POSITION_Y: f32 = FIELD_BOUNDARIES_TOP;
 const BOTTOM_WALL_POSITION_Y: f32 = FIELD_BOUNDARIES_BOTTOM;
@@ -37,6 +37,7 @@ impl Wall {
 pub struct WallBundle {
     location: Wall,
     position: Position,
+    shape: Shape,
 }
 
 impl WallBundle {
@@ -44,6 +45,7 @@ impl WallBundle {
         Self {
             position: location.position(),
             location,
+            shape: Shape(Vec2::new(WALL_WIDTH, WALL_HEIGHT))
         }
     }
 }
@@ -54,7 +56,7 @@ pub fn spawn_walls(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let wall = Mesh::from(Rectangle::new(WALL_WIDTH, WALL_HEIGHT));
-    let wall_color = ColorMaterial::from(Color::rgb(0., 0., 0.));
+    let wall_color = ColorMaterial::from(Color::rgb(1., 0., 0.));
 
     let mesh_handle = meshes.add(wall);
     let material_handle = materials.add(wall_color);

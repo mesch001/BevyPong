@@ -10,13 +10,15 @@ use bevy::{
     utils::default,
 };
 
-use crate::position::{Position, FIELD_BOUNDARIES_LEFT, FIELD_BOUNDARIES_RIGHT};
+use crate::position::{FIELD_BOUNDARIES_LEFT, FIELD_BOUNDARIES_RIGHT};
+use crate::components::{Position, Velocity, Shape};
 
 const PADDLE_POSITION_Y: f32 = 0.;
 const PADDLE_POSITION_X_LEFT: f32 = FIELD_BOUNDARIES_LEFT + 50.;
 const PADDLE_POSITION_X_RIGHT: f32 = FIELD_BOUNDARIES_RIGHT - 50.;
 pub const PADDLE_WIDTH: f32 = 20.;
 pub const PADDLE_HEIGHT: f32 = 100.;
+pub const PADDLE_VELOCITY: f32 = 4.;
 
 #[derive(Debug, PartialEq)]
 pub enum PaddleLocation {
@@ -44,6 +46,8 @@ impl Paddle {
 pub struct PaddleBundle {
     location: Paddle,
     position: Position,
+    velocity: Velocity,
+    shape: Shape,
 }
 
 impl PaddleBundle {
@@ -51,6 +55,8 @@ impl PaddleBundle {
         Self {
             position: location.position(),
             location,
+            velocity: Velocity(Vec2::new(0.,0.)),
+            shape: Shape(Vec2::new(PADDLE_WIDTH, PADDLE_HEIGHT))
         }
     }
 }
@@ -81,8 +87,8 @@ pub fn spawn_paddles(
             location: PaddleLocation::Right,
         }),
         MaterialMesh2dBundle {
-            mesh: mesh_handle.into(),
-            material: material_handle,
+            mesh: mesh_handle.clone().into(),
+            material: material_handle.clone(),
             ..default()
         },
     ));
