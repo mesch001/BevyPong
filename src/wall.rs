@@ -54,7 +54,7 @@ pub fn spawn_walls(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let wall = Mesh::from(Rectangle::new(WALL_WIDTH, WALL_HEIGHT));
-    let wall_color = ColorMaterial::from(Color::rgb(0., 0., 0.));
+    let wall_color = ColorMaterial::from(Color::srgb(0., 0., 0.));
 
     let mesh_handle = meshes.add(wall);
     let material_handle = materials.add(wall_color);

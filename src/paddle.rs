@@ -61,7 +61,7 @@ pub fn spawn_paddles(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let paddle = Mesh::from(Rectangle::new(PADDLE_WIDTH, PADDLE_HEIGHT));
-    let paddle_color = ColorMaterial::from(Color::rgb(255., 0., 132.));
+    let paddle_color = ColorMaterial::from(Color::srgb(255., 0., 132.));
 
     let mesh_handle = meshes.add(paddle);
     let material_handle = materials.add(paddle_color);

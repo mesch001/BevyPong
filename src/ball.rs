@@ -8,7 +8,8 @@ use bevy::{
     },
     math::{primitives::Circle, Vec2},
     prelude::{Query, With},
-    render::{color::Color, mesh::Mesh},
+    render::mesh::Mesh,
+    color::Color,
     sprite::{ColorMaterial, MaterialMesh2dBundle},
     utils::default,
 };
@@ -50,7 +51,7 @@ pub fn spawn_ball(
     println!("Spawning ball");
 
     let ball = Mesh::from(Circle::new(BALL_SIZE));
-    let ball_color = ColorMaterial::from(Color::rgb(245., 255., 0.));
+    let ball_color = Color::srgb(245., 255., 0.);
 
     let mesh_handle = meshes.add(ball);
     let material_handle = materials.add(ball_color);

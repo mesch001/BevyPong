@@ -43,7 +43,7 @@ fn main() {
                 move_player_paddle,
             ),
         )
-        .run()
+        .run();
 }
 
 fn setup(mut commands: Commands) {
